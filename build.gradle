@@ -1,0 +1,34 @@
+plugins {
+    id 'scala'
+}
+
+ext.scala_version = "2.12"
+
+def buildVersion = "1.0"
+
+version = ext.scala_version + "_" + "$buildVersion"
+
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'software.amazon.awssdk', name: 'athena', version: '2.17.149'
+    
+    compileOnly 'org.scala-lang:scala-library:2.12.15'
+    compileOnly "io.delta:delta-core_2.12:1.1.0"
+    compileOnly "org.apache.spark:spark-core_2.12:3.0.1"
+    compileOnly "org.apache.spark:spark-sql_2.12:3.0.1"
+}
+
+jar {
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+     baseName 'athena-delta-integration'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+}
+
